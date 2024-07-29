@@ -27,10 +27,6 @@ The analysis is performed using R and includes the following visualizations:
 
 ![Gene Histogram](gene_histogram.png)
 
-### Historical Plot of Gene Expression Data
-
-![Historical Plot](hist_plot.png)
-
 ### Scatter Plot of Gene Expression vs. Age
 
 ![Scatter Plot](scatter_plot.png)
