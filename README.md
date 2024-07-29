@@ -21,15 +21,15 @@ The analysis is performed using R and includes the following visualizations:
 
 ### Boxplot of Gene Expression by Sex and Disease Status
 
-![Boxplot](boxplot.png)
+![Boxplot](plots/boxplot.png)
 
 ### Histogram of Gene Expression
 
-![Gene Histogram](gene_histogram.png)
+![Gene Histogram](plots/gene_histogram.png)
 
 ### Scatter Plot of Gene Expression vs. Age
 
-![Scatter Plot](scatter_plot.png)
+![Scatter Plot](plots/scatter_plot.png)
 
 ## Usage
 
