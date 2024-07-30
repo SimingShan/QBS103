@@ -4,18 +4,19 @@ output: pdf_document
 date: "2024-07-29"
 ---
 
-```{r}
+```{r, include=FALSE}
 # Load necessary libraries
 library(ggplot2)
 library(dplyr)
 library(readr)
-library(data.table)
+library(data.table) #this is for the transpose function
+library(systemfonts) #this is for the font
 ```
 
-```{r, show_col_types = FALSE}
+```{r, show_col_types = FALSE, include=FALSE}
 # Load the datasets
-genes_data <- read_csv('QBS103_GSE157103_genes.csv', show_col_types = FALSE)
-metadata <- read_csv('QBS103_GSE157103_series_matrix.csv', show_col_types = FALSE)
+genes_data <- read_csv('dataset/QBS103_GSE157103_genes.csv', show_col_types = FALSE)
+metadata <- read_csv('dataset/QBS103_GSE157103_series_matrix.csv', show_col_types = FALSE)
 # Rename the column `...1` to `Genes`
 genes_data <- genes_data %>% rename(Genes = `...1`)
 ```
@@ -23,18 +24,19 @@ genes_data <- genes_data %>% rename(Genes = `...1`)
 ```{r}
 # Select the first gene
 gene <- genes_data[1, ]
+# save the gene name
 gene_name <- as.character(gene[1,1])
+# transpose the selected gene for better merging the dataset and rename the column name
 transposed_gene <- transpose(gene[-1]) %>% rename(!!gene_name := V1)
-print(transposed_gene)
+# combine two datasets with participant_is and gene
+# such that we have a transposed gene dataset with two column, prepare for merging
 transposed_gene_data <- cbind(participant_id = colnames(gene[-1]), transposed_gene)
-print(transposed_gene_data)
+# merge the dataset
 merged_data <- merge(metadata, transposed_gene_data, by = "participant_id")
-print(merged_data)
 ```
 
-
-
 ```{r}
+# select one continuous covariate and two categorical covariate 
 continuous_covariate <- "age" 
 categorical_covariate1 <- "sex" 
 categorical_covariate2 <- "disease_status" 
@@ -43,92 +45,99 @@ categorical_covariate2 <- "disease_status"
 ```{r}
 ### Plots ###
 # Histogram for gene expression
-gene_histogram <- ggplot(merged_data, aes_string(x = gene_name)) + 
-  geom_histogram(aes(y = ..density..), binwidth = 0.05, color = "black", fill = "#1dddeb", alpha = 0.7) + 
-  geom_density(aes(y = ..density..), color = "white", size = 1) +
+gene_histogram <- ggplot(merged_data, aes(x = !!sym(gene_name))) + 
+  geom_histogram(aes(y = after_stat(density)), 
+                 binwidth = 0.05, color = "#1dddeb", 
+                 fill = "#1dddeb", alpha = 0.7) + 
+  geom_density(aes(y = after_stat(density)), color = "white", linewidth = 1) +
   labs(x = gene_name, y = "Density") +
   theme_classic() +
   theme(
-    plot.background = element_rect(fill = '#333333', color = NA),
-    panel.background = element_rect(fill = '#333333', color = NA),
-    text = element_text(family = "Times New Roman", color = 'white', size = 20),
+    plot.background = element_rect(fill = '#333333'),
+    panel.background = element_rect(fill = '#333333'),
+    text = element_text( color = 'white', size = 20),
     axis.title = element_text(size = 14),
     axis.text = element_text(size = 12, color = 'white'),
     axis.ticks = element_line(color = "white"),
-    plot.title = element_text(size = 16, hjust = 0.5, color = 'white'),
+    plot.title = element_text(size = 16, hjust = 0.5, color = 'white')
   ) +
   ggtitle("Histogram of Gene Expression")
 
 # Save the histogram
-ggsave("gene_histogram.png", plot = gene_histogram, width = 16, height = 9)
+ggsave("plots/gene_histogram.png", plot = gene_histogram, width = 16, height = 9)
 
 # Print the histogram
 print(gene_histogram)
+
+# This aesthetic is inspired by https://waterdata.usgs.gov/blog/ggplot-jazz/
 ```
 
-```{r}
-# Scatter plot
+```{r, message=FALSE}
+# Notice that there is a ":" value in the age, we have to filter it out first
 merged_data$age <- as.numeric(merged_data$age)
-
-# Plot
-scatter_plot <- ggplot(merged_data, aes_string(x = "age", y = gene_name)) + 
+filtered_data <- merged_data %>% filter(!is.na(age))
+# Scatter Plot
+scatter_plot <- ggplot(filtered_data, aes(x = age, y = !!sym(gene_name))) + 
   geom_point(color = "#F8B195", size = 2) + 
   geom_smooth(method = "loess", color = "#95ebf8") +  # Add a LOESS curve
   geom_rug(color = "white") +  # Add a rug plot
   labs(x = "Age", y = gene_name) +
   theme_classic() +
   theme(
-    plot.background = element_rect(fill = '#333333', color = NA),
-    panel.background = element_rect(fill = '#333333', color = NA),
-    text = element_text(family = "Times New Roman", color = 'white', size = 20),
-    axis.title = element_text(family = "Times New Roman", size = 14, color = 'white'),
-    axis.text = element_text(family = "Times New Roman", size = 12, color = 'white'),
+    plot.background = element_rect(fill = '#333333'),
+    panel.background = element_rect(fill = '#333333'),
+    text = element_text( color = 'white', size = 20),
+    axis.title = element_text( size = 14, color = 'white'),
+    axis.text = element_text( size = 12, color = 'white'),
     axis.ticks = element_line(color = "white"),
-    plot.title = element_text(family = "Times New Roman", size = 16, hjust = 0.5, color = 'white'),
-    panel.grid.major = element_line(color = "gray70", size = 0.1),
-    panel.grid.minor = element_line(color = "gray70", size = 0.1)
-  ) 
+    plot.title = element_text( size = 16, hjust = 0.5, color = 'white'),
+    panel.grid.major = element_line(color = "gray", size = 0.1),
+    panel.grid.minor = element_line(color = "gray", size = 0.1)
+  ) +
   ggtitle("Scatter Plot of Gene Expression vs Age")
 
 # Save the scatter plot
-ggsave("scatter_plot.png", plot = scatter_plot, width = 16, height = 9)
+ggsave("plots/scatter_plot.png", plot = scatter_plot, width = 16, height = 9)
 
 # Print the scatter plot
 print(scatter_plot)
+# This aesthetic is inspired by https://waterdata.usgs.gov/blog/ggplot-jazz/
 ```
 
 ```{r}
-# Box Plot
+# filter out data points with unkown sex
 merged_data <- merged_data %>% filter(sex != "unknown")
 # Define a color palette and labels for the legend
 palette <- c("disease state: COVID-19" = "#66c2a5", "disease state: non-COVID-19" = "#fc8d62")
 labels <- c("disease state: COVID-19" = "COVID-19", "disease state: non-COVID-19" = "non-COVID-19")
 
 # Plot
-boxplot <- ggplot(merged_data, aes_string(x = categorical_covariate1, y = gene_name, fill = categorical_covariate2)) + 
-  geom_boxplot(outlier.color = "red", outlier.size = 2, color = "white") + 
+boxplot <- ggplot(merged_data, aes_string(x = categorical_covariate1,
+                                          y = gene_name, 
+                                          fill = categorical_covariate2)) + 
+  geom_boxplot(outlier.color = "red", color = "white") + 
   labs(x = "Sex", y = "Gene Expression", fill = "Disease Status") +
   theme_classic() +
   theme(
-    plot.background = element_rect(fill = '#2E2E2E', color = NA),
-    panel.background = element_rect(fill = '#2E2E2E', color = NA),
-    text = element_text(family = "Times New Roman", color = 'white', size = 16),
-    axis.title = element_text(family = "Times New Roman", size = 18, color = 'white'),
-    axis.text = element_text(family = "Times New Roman", size = 14, color = 'white'),
-    axis.ticks = element_line(color = "white"),
-    plot.title = element_text(family = "Times New Roman", size = 20, color = 'white'),
+    plot.background = element_rect(fill = '#333333'),
+    panel.background = element_rect(fill = '#333333'),
+    text = element_text( color = 'white', size = 14),
+    axis.title = element_text( size = 12, color = 'white'),
+    axis.text = element_text( size = 12, color = 'white'),
+    axis.ticks = element_line(color = "gray"),
+    plot.title = element_text( size = 16, color = 'white', hjust=0.5),
     legend.position = 'top',
-    legend.background = element_rect(fill = "#2E2E2E", color = NA),
-    legend.text = element_text(family = "Times New Roman", color = 'white', size = 14),
-    legend.title = element_text(family = "Times New Roman", color = 'white', size = 14),
-    legend.key = element_rect(fill = "#2E2E2E", color = NA),
-    panel.grid.major = element_line(color = "gray50", size = 0.5)
+    legend.background = element_rect(fill = "#333333"),
+    legend.text = element_text( color = 'white', size = 12),
+    legend.title = element_text( color = 'white', size = 12),
+    legend.key = element_rect(fill = "#333333"),
+    panel.grid.major = element_line(color = "gray", size = 0.5)
   ) +
   scale_fill_manual(values = palette, labels = labels) + 
   ggtitle("Boxplot of Gene Expression by Sex and Disease Status")
 
 # Save the boxplot
-ggsave("boxplot.png", plot = boxplot, width = 16, height = 9)
+ggsave("plots/boxplot.png", plot = boxplot, width = 16, height = 9)
 
 # Print the boxplot
 print(boxplot)
