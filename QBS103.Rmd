@@ -26,6 +26,7 @@ genes_data <- genes_data %>% rename(Genes = `...1`)
 gene <- genes_data[1, ]
 # save the gene name
 gene_name <- as.character(gene[1,1])
+print(gene)
 # transpose the selected gene for better merging the dataset and rename the column name
 transposed_gene <- transpose(gene[-1]) %>% rename(!!gene_name := V1)
 # combine two datasets with participant_is and gene
@@ -46,10 +47,8 @@ categorical_covariate2 <- "disease_status"
 ### Plots ###
 # Histogram for gene expression
 gene_histogram <- ggplot(merged_data, aes(x = !!sym(gene_name))) + 
-  geom_histogram(aes(y = after_stat(density)), 
-                 binwidth = 0.05, color = "#1dddeb", 
-                 fill = "#1dddeb", alpha = 0.7) + 
-  geom_density(aes(y = after_stat(density)), color = "white", linewidth = 1) +
+  geom_histogram(binwidth = 0.05, color = "#1dddeb", 
+                 fill = "#1dddeb", alpha = 0.7) +
   labs(x = gene_name, y = "Density") +
   theme_classic() +
   theme(
