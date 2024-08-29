@@ -5,7 +5,7 @@ date: "2024-08-29"
 ---
 
 
-```{r, include=FALSE}
+```{r, message=FALSE}
 # Load necessary libraries
 library(ggplot2)
 library(dplyr)
@@ -16,7 +16,7 @@ library(tidyverse)
 library(pheatmap)
 ```
 
-```{r, warning=FALSE,include=FALSE}
+```{r, warning=FALSE}
 # Load the datasets
 meta_data_path = 'dataset/QBS103_GSE157103_series_matrix.csv'
 gene_data_path = 'dataset/QBS103_GSE157103_genes.csv'
