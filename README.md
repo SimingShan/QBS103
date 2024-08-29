@@ -5,6 +5,7 @@ This repository contains the code and data for the QBS103 project. The project i
 ## Contents
 
 - `main.Rmd`: R Markdown file with the analysis.
+- `previous_sub\`: A folder that contains the pdf and Rmd files for submission 1 and 2.
 - `QBS103.Rproj`: RStudio project file.
 - `dataset/QBS103_GSE157103_genes.csv`: CSV file with gene data.
 - `dataset/QBS103_GSE157103_series_matrix.csv`: CSV file with patients meta data.
