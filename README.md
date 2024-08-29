@@ -40,7 +40,7 @@ The analysis is performed using R and includes the following visualizations:
 
 ## Usage
 
-To reproduce the analysis, open the `QBS103.Rproj` file in RStudio and knit the `final_sub.Rmd` file.
+To reproduce the analysis, open the `QBS103.Rproj` file in RStudio and knit the `main.Rmd` file.
 
 ## License
 
