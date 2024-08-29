@@ -6,12 +6,8 @@ This repository contains the code and data for the QBS103 project. The project i
 
 - `QBS103.Rmd`: R Markdown file with the analysis.
 - `QBS103.Rproj`: RStudio project file.
-- `QBS103_GSE157103_genes.csv`: CSV file with gene data.
-- `QBS103_GSE157103_series_matrix.csv`: CSV file with series matrix data.
-- `boxplot.png`: Boxplot of gene expression by sex and disease status.
-- `gene_histogram.png`: Histogram of gene expression.
-- `hist_plot.png`: Historical plot of gene expression data.
-- `scatter_plot.png`: Scatter plot of gene expression vs. age.
+- `dataset/QBS103_GSE157103_genes.csv`: CSV file with gene data.
+- `dataset/QBS103_GSE157103_series_matrix.csv`: CSV file with patients meta data.
 - `LICENSE`: License for the project.
 - `README.md`: This file.
 
@@ -19,21 +15,32 @@ This repository contains the code and data for the QBS103 project. The project i
 
 The analysis is performed using R and includes the following visualizations:
 
-### Boxplot of Gene Expression by Sex and Disease Status
-
-![Boxplot](plots/boxplot.png)
-
 ### Histogram of Gene Expression
 
-![Gene Histogram](plots/gene_histogram.png)
+![Gene Histogram](plots/plots_A1BG_histogram.png)
+
+
+### Boxplot of Gene Expression by Sex and Disease Status
+
+![Boxplot](plots/plots_A1BG_boxplot.png)
+
 
 ### Scatter Plot of Gene Expression vs. Age
 
-![Scatter Plot](plots/scatter_plot.png)
+![Scatter Plot](plots/plots_A1BG_scatter_plot.png)
+
+### heatmap of 15 selected genes 
+
+![heat map](plots/plots_heatmap.png)
+
+### ridge plot of Gene Expression vs. Sex and Disease Status
+
+![Ridge plot](plots/plots_Ridge.png)
+
 
 ## Usage
 
-To reproduce the analysis, open the `QBS103.Rproj` file in RStudio and knit the `QBS103.Rmd` file.
+To reproduce the analysis, open the `QBS103.Rproj` file in RStudio and knit the `final_sub.Rmd` file.
 
 ## License
 
